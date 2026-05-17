@@ -47,9 +47,9 @@ If your paper already lives in a git repo, copy two files in:
 
 ```bash
 cd /path/to/your/paper-repo
-curl -fsSL https://raw.githubusercontent.com/<you>/overleaf-git-sync/main/setup.sh -o setup.sh
+curl -fsSL https://raw.githubusercontent.com/suehyunpark/overleaf-git-sync/main/setup.sh -o setup.sh
 mkdir -p .githooks
-curl -fsSL https://raw.githubusercontent.com/<you>/overleaf-git-sync/main/.githooks/pre-push -o .githooks/pre-push
+curl -fsSL https://raw.githubusercontent.com/suehyunpark/overleaf-git-sync/main/.githooks/pre-push -o .githooks/pre-push
 chmod +x setup.sh .githooks/pre-push
 bash setup.sh
 ```
