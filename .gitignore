@@ -1,0 +1,8 @@
+# Local-only overrides (user can put per-clone settings here without committing)
+.overleaf-sync.local
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
