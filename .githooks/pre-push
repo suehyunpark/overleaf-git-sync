@@ -3,9 +3,10 @@
 # origin so the two remotes never drift apart (unlike multi-push URL which is
 # NOT atomic — a non-fast-forward on Overleaf still lets GitLab push proceed).
 #
-# Installed by setup.sh via core.hooksPath=.githooks (tracked in repo).
+# Installed by setup.sh via a trampoline at .git/hooks/pre-push (Overleaf's
+# git mirror strips exec bits on round-trip, so we can't rely on core.hooksPath).
 
-set -e
+set -eo pipefail
 
 # Only intercept pushes to origin. Other remotes (e.g., pushing directly to
 # overleaf for some reason) shouldn't re-trigger this.
@@ -15,17 +16,17 @@ remote="$1"
 # Overleaf remote must exist (set up by setup.sh).
 if ! git remote | grep -q '^overleaf$'; then
   echo "pre-push: WARN — 'overleaf' remote not configured. Run bash setup.sh." >&2
-  exit 0   # don't block GitLab push if user deliberately opted out
+  exit 0   # don't block primary push if user deliberately opted out
 fi
 
 echo "[pre-push] pushing to Overleaf first ..."
-if ! git push overleaf master; then
+if ! git push overleaf HEAD:master; then
   echo "" >&2
-  echo "[pre-push] ERROR: Overleaf push failed. GitLab push ABORTED to prevent drift." >&2
+  echo "[pre-push] ERROR: Overleaf push failed. primary remote push ABORTED to prevent drift." >&2
   echo "            Recover:" >&2
   echo "              git olp          # pull Overleaf changes (merge)" >&2
   echo "              # resolve conflicts if any, commit" >&2
   echo "              git push         # retry" >&2
   exit 1
 fi
-echo "[pre-push] Overleaf OK — proceeding to GitLab."
+echo "[pre-push] Overleaf OK — proceeding to primary remote."

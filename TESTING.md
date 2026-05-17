@@ -26,7 +26,7 @@ Validation matrix for the Overleaf ↔ git sync (`setup.sh` + pre-push hook + al
 | ID  | Scenario                       | Procedure                                                | Expected |
 |-----|--------------------------------|----------------------------------------------------------|----------|
 | H1  | Atomic push success            | Both remotes clean; local commit; `git push`             | Output order: `[pre-push] pushing to Overleaf first` → Overleaf OK → primary push. |
-| H2  | Atomic push blocked            | Web edit + wait; local commit; `git push`                | `[pre-push] ERROR: Overleaf push failed. GitLab push ABORTED.` **Primary remote does not advance.** |
+| H2  | Atomic push blocked            | Web edit + wait; local commit; `git push`                | `[pre-push] ERROR: Overleaf push failed. primary remote push ABORTED to prevent drift.` **Primary remote does not advance.** |
 | H3  | No `overleaf` remote           | `git remote remove overleaf`; local commit; `git push`   | Hook warns + allows primary push (fallback). Recover with `bash setup.sh`. |
 | H4  | Direct `git push overleaf`     | `git push overleaf master`                                | Hook doesn't fire (only intercepts pushes to `origin`). |
 | H5  | `--no-verify` bypass           | `git push --no-verify`                                   | Hook skipped, primary-only push. Emergency escape hatch. |
@@ -92,7 +92,7 @@ Expected hook output:
 ```
 [pre-push] pushing to Overleaf first ...
  ! [rejected]        master -> master (fetch first)
-[pre-push] ERROR: Overleaf push failed. GitLab push ABORTED to prevent drift.
+[pre-push] ERROR: Overleaf push failed. primary remote push ABORTED to prevent drift.
 ```
 
 Recovery:
@@ -119,6 +119,8 @@ Recover: `bash setup.sh`.
 ## Cleanup
 
 Remove test markers:
+
+(BSD/macOS sed: use `sed -i '' '/^% [TH][0-9]/d' main.tex`.)
 
 ```bash
 sed -i '/^% [TH][0-9]/d' main.tex

@@ -77,9 +77,9 @@ echo "✓ $CONFIG_FILE written (commit this so collaborators only need their tok
 #    failed Overleaf push still lets the primary remote push proceed).
 if git remote | grep -q '^origin$'; then
   git remote set-url --push origin "$(git remote get-url origin)"
-  while git config --get-all remote.origin.pushurl 2>/dev/null | grep -q .; do
+  if git config --get-all remote.origin.pushurl 2>/dev/null | grep -q .; then
     git config --unset-all remote.origin.pushurl
-  done
+  fi
   echo "✓ origin push URL = single (primary remote only); Overleaf push via pre-push hook"
 else
   echo "note: no 'origin' remote yet. Add one (GitHub/GitLab/etc.) before pushing."

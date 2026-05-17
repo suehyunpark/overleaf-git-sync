@@ -79,7 +79,7 @@ git pull && git olp
 Standard git 3-way merge. Two common cases:
 
 - **`git olp` says CONFLICT** — same line edited on web and locally. Resolve markers → `git add` → `git commit`.
-- **`git push` fails with `Overleaf push failed. GitLab push ABORTED`** — Overleaf moved ahead while you were committing:
+- **`git push` fails with `Overleaf push failed. primary remote push ABORTED`** — Overleaf moved ahead while you were committing:
   ```bash
   git olp     # merge Overleaf changes
   # resolve any conflicts, commit
