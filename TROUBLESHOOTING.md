@@ -41,7 +41,13 @@ Only as an escape hatch:
 - Overleaf is down and you need to ship to the primary remote anyway.
 - You know you're intentionally diverging the two remotes (rare).
 
-After using `--no-verify`, run `git push overleaf master` (or wait for Overleaf to come back) to re-sync.
+After using `--no-verify`, run `git push overleaf HEAD:"$(git config --get alias.olp | awk '{print $NF}')"` (or wait for Overleaf to come back) to re-sync.
+
+## `git olp` says `couldn't find remote ref master`
+
+The Overleaf project uses `main` as its default branch, while an older version
+of this tool assumed `master`. Update the two downloaded files and re-run
+`bash setup.sh`; it now detects the remote's default branch automatically.
 
 ## `git olp` keeps producing huge merge commits
 

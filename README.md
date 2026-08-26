@@ -33,7 +33,7 @@ This repo bundles three small pieces that make that work:
    # paste project ID
    # paste token (hidden)
    ```
-6. Commit the generated `.overleaf-sync` (project ID is not a secret; it lets collaborators skip the project-ID prompt):
+6. Commit the generated `.overleaf-sync` (project ID and detected default branch are not secrets; it lets collaborators skip the project-ID prompt):
 
    ```bash
    git add .overleaf-sync
@@ -64,7 +64,7 @@ Commit `setup.sh`, `.githooks/pre-push`, and `.overleaf-sync` so teammates can r
 | `git olp`  | Pull from Overleaf — **always merge** (rebase over Overleaf's auto-commits creates false conflicts). |
 | `git push` | Push to **both** remotes. Hook pushes Overleaf first; if it fails, the primary push is aborted (atomic). |
 | `git ols`  | Show the last 10 commits on Overleaf's side.                              |
-| `git olf`  | Fetch (only) from Overleaf — useful before `git log overleaf/master`.     |
+| `git olf`  | Fetch (only) from Overleaf — useful before inspecting `overleaf/<default-branch>`.     |
 
 **Recommended routine before editing:**
 
@@ -112,7 +112,7 @@ The hook lives in `.githooks/pre-push` (tracked, version-controlled). But Overle
 |-----------------------|----------------------------------------------------------|
 | `setup.sh`            | One-shot installer (run per clone).                      |
 | `.githooks/pre-push`  | Atomic-push hook. Read-only at runtime.                  |
-| `.overleaf-sync`      | Persisted project ID. Tracked. Not a secret.             |
+| `.overleaf-sync`      | Persisted project ID and Overleaf default branch. Tracked. Not secret.             |
 | [TESTING.md](TESTING.md) | Validation matrix to verify your install end-to-end. |
 | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | Common errors and recovery.            |
 

@@ -8,6 +8,13 @@
 
 set -eo pipefail
 
+CONFIG_FILE="$(git rev-parse --show-toplevel)/.overleaf-sync"
+OVERLEAF_BRANCH="master"
+if [[ -f "$CONFIG_FILE" ]]; then
+  # shellcheck disable=SC1090
+  source "$CONFIG_FILE"
+fi
+
 # Only intercept pushes to origin. Other remotes (e.g., pushing directly to
 # overleaf for some reason) shouldn't re-trigger this.
 remote="$1"
@@ -19,8 +26,8 @@ if ! git remote | grep -q '^overleaf$'; then
   exit 0   # don't block primary push if user deliberately opted out
 fi
 
-echo "[pre-push] pushing to Overleaf first ..."
-if ! git push overleaf HEAD:master; then
+echo "[pre-push] pushing to Overleaf/$OVERLEAF_BRANCH first ..."
+if ! git push overleaf "HEAD:$OVERLEAF_BRANCH"; then
   echo "" >&2
   echo "[pre-push] ERROR: Overleaf push failed. primary remote push ABORTED to prevent drift." >&2
   echo "            Recover:" >&2

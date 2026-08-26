@@ -6,7 +6,7 @@ Validation matrix for the Overleaf ↔ git sync (`setup.sh` + pre-push hook + al
 
 - `bash setup.sh` completed successfully (token + project ID accepted).
 - `git remote -v` shows `origin` (your primary, fetch+push) and `overleaf` (fetch+push).
-- `git config alias.olp` → `pull --no-rebase overleaf master`.
+- `git config alias.olp` points to the branch reported as Overleaf's default (`main` or `master`).
 - `.git/hooks/pre-push` exists and is executable (the trampoline).
 
 ## Test matrix
@@ -28,7 +28,7 @@ Validation matrix for the Overleaf ↔ git sync (`setup.sh` + pre-push hook + al
 | H1  | Atomic push success            | Both remotes clean; local commit; `git push`             | Output order: `[pre-push] pushing to Overleaf first` → Overleaf OK → primary push. |
 | H2  | Atomic push blocked            | Web edit + wait; local commit; `git push`                | `[pre-push] ERROR: Overleaf push failed. primary remote push ABORTED to prevent drift.` **Primary remote does not advance.** |
 | H3  | No `overleaf` remote           | `git remote remove overleaf`; local commit; `git push`   | Hook warns + allows primary push (fallback). Recover with `bash setup.sh`. |
-| H4  | Direct `git push overleaf`     | `git push overleaf master`                                | Hook doesn't fire (only intercepts pushes to `origin`). |
+| H4  | Direct `git push overleaf`     | `git push overleaf HEAD:<overleaf-default-branch>`        | Hook doesn't fire (only intercepts pushes to `origin`). |
 | H5  | `--no-verify` bypass           | `git push --no-verify`                                   | Hook skipped, primary-only push. Emergency escape hatch. |
 | H6  | `setup.sh` re-run              | `bash setup.sh` again with same inputs                   | Idempotent — config overwritten, no errors. |
 
@@ -61,13 +61,13 @@ Expected output:
 ```
 [pre-push] pushing to Overleaf first ...
 To https://git.overleaf.com/...
-   xxx..yyy  master -> master
+   xxx..yyy  <overleaf-default-branch> -> <overleaf-default-branch>
 [pre-push] Overleaf OK — proceeding to GitLab.
 To <your primary remote>
    xxx..yyy  master -> master
 ```
 
-Verify: `git log origin/master -1` == `git log overleaf/master -1` == local HEAD.
+Verify: `git log origin/<primary-branch> -1` == `git log overleaf/<overleaf-default-branch> -1` == local HEAD.
 
 ### H2 — Atomic push blocked (most important)
 
@@ -91,7 +91,7 @@ Expected hook output:
 
 ```
 [pre-push] pushing to Overleaf first ...
- ! [rejected]        master -> master (fetch first)
+ ! [rejected]        <overleaf-default-branch> -> <overleaf-default-branch> (fetch first)
 [pre-push] ERROR: Overleaf push failed. primary remote push ABORTED to prevent drift.
 ```
 
