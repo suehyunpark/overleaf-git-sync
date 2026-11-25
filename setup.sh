@@ -90,7 +90,8 @@ echo "✓ $CONFIG_FILE written (commit this so collaborators only need their tok
 #    hook for atomicity, NOT on multi-push URLs (which are non-atomic — a
 #    failed Overleaf push still lets the primary remote push proceed).
 if git remote | grep -q '^origin$'; then
-  git remote set-url --push origin "$(git remote get-url origin)"
+  # Drop every push URL so origin pushes to its fetch URL again. (`git remote
+  # set-url --push` refuses to overwrite more than one existing push URL.)
   if git config --get-all remote.origin.pushurl 2>/dev/null | grep -q .; then
     git config --unset-all remote.origin.pushurl
   fi
